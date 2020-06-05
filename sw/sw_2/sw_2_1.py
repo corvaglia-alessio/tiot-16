@@ -103,8 +103,8 @@ class NomeClasse():
             cp.HTTPError(404, "Not found")
 
     def PUT(self, *uri, **params):
-        """ Metodo GET
-            
+        """ Metodo PUT
+            Aggiunge users, devices e services all'elenco 
         """
 
         if len(uri) != 1:

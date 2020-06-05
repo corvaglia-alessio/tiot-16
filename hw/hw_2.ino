@@ -106,6 +106,7 @@ int index_noise = 0;
 int valori_mod = 0;
 
 int cont_bat = 0;
+unsigned long cont_bat_time = 0;
 
 /* --------------------------------------- */
 /*    **          Prototipi       **       */
@@ -160,19 +161,22 @@ void setup()
 
     // PIR
     attachInterrupt(digitalPinToInterrupt(PIR_PIN), people_in_room_pir, CHANGE);
+
+     // NOISE
+    attachInterrupt(digitalPinToInterrupt(NOISE_PIN), accendi_battiti;, LOW);
 }
 
 void loop()
 {
     
     cambia_val_temp();
-
+    /*
     if(digitalRead(NOISE_PIN)==LOW)
     {
         //people_in_room_noise();
         accendi_battiti();
     }
-
+    */
     controllo_people_in_room_pir();
     //controllo_people_in_room_noise();
 
@@ -381,12 +385,27 @@ void cambia_val_temp()
 
 void accendi_battiti()
 {
-    cont_bat++;
 
-    if( cont_bat == 2)
+    cont_bat++;
+    unsigned long time_temp = millis();
+
+    if(cont_bat == 2) 
     {
-        led_state_2 = !led_state_2;
-        cont_bat = 0;
-        digitalWrite(LED_PIN_2, led_state_2);
+        if((time_temp-cont_bat_time) < 3*MSEC)
+        {
+            led_state_2 = !led_state_2;
+            cont_bat = 0;
+            cont_bat_time = 0;
+            digitalWrite(LED_PIN_2, led_state_2);
+        }
+        else
+        {
+            cont_bat = 1;
+            cont_bat_time = time_temp;
+        }
+    }
+    else
+    {
+        cont_bat_time = time_temp;
     }
 }

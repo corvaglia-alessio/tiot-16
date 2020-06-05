@@ -2,9 +2,12 @@ import cherrypy as cp
 import os
 import sys
 import json
+import time #   time.ctime(time.time()) restituisce qualcosa che hai gia' visto 
+            #   e rivedeitelo se non te lo ricordi
 
 class NomeClasse():
     exposed = True
+    file = "values.json"
     
     def __init__(self, domain, ip="", port=""):
         self._messagebroker =   {
@@ -12,9 +15,7 @@ class NomeClasse():
                                 "ip":ip,
                                 "port":port
                                 }
-        self._devices = list()
-        self._users = list()
-        self._services = list()
+        self.leggi_values()
 
     @property
     def messagebroker(self):
@@ -106,6 +107,64 @@ class NomeClasse():
             
         """
 
+        if len(uri) != 1:
+            cp.HTTPError(400, "Bad request")
+
+        if uri[0] == "newdevice":
+            body = json.loads(cp.request.body.read().decode("utf-8"))
+            body["timestamp"] = time.time()
+            self.devices = body
+
+            self.salva_values()
+        
+        elif uri[0] == "newuser":
+            body = json.loads(cp.request.body.read().decode("utf-8"))
+            self.users = body
+
+            self.salva_values()
+
+        elif uri[0] == "newservice":
+            body = json.loads(cp.request.body.read().decode("utf-8"))
+            body["timestamp"] = time.time()
+            self.users = body
+
+            self.salva_values()
+
+        else:
+            cp.HTTPError(404, "Not found")
+
+    def leggi_values(self):
+        """
+            Legge i valori salvati nel file
+
+            probabilmente servira un semafor se implementiamo i thread
+            reader e writer tornano AMEN
+        """
+
+        with open(self.file, "r") as f:
+            diz = json.loads(f.read())
+        
+        self._devices = diz["devices"]
+        self._users = diz["users"]
+        self._services = diz["services"]
+    
+    def salva_values(self):
+        """
+            Scrive i valori su file
+
+            probabilmente servira un semafor se implementiamo i thread
+            reader e writer tornano AMEN
+        """
+
+        diz = {
+                "users":self.users,
+                "devices":self.devices,
+                "services":self.services
+              }
+
+        with open(self.file, "w") as f:
+            f.write(f"{json.dumps(diz)}")
+
     @staticmethod
     def search_id(list_, id):
         for d in list_:
@@ -127,3 +186,6 @@ if __name__ == "__main__":
     cp.config.update({'server.socket_port':9090})
     cp.engine.start()
     cp.engine.block()
+
+#{"users":[],"devices":[],"services":[]}
+#{"id":"123Stella","nome":"Marco","surname":"Manco","email":"prova@lab.com"}

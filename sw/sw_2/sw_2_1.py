@@ -113,20 +113,20 @@ class NomeClasse():
         if uri[0] == "newdevice":
             body = json.loads(cp.request.body.read().decode("utf-8"))
             body["timestamp"] = time.time()
-            self.devices = body
+            self.cerca_value(body, "device")
 
             self.salva_values()
         
         elif uri[0] == "newuser":
             body = json.loads(cp.request.body.read().decode("utf-8"))
-            self.users = body
+            self.cerca_value(body, "user")
 
             self.salva_values()
 
         elif uri[0] == "newservice":
             body = json.loads(cp.request.body.read().decode("utf-8"))
             body["timestamp"] = time.time()
-            self.users = body
+            self.cerca_value(body, "service")
 
             self.salva_values()
 
@@ -164,6 +164,35 @@ class NomeClasse():
 
         with open(self.file, "w") as f:
             f.write(f"{json.dumps(diz)}")
+
+    def cerca_value(self, value, type):
+
+        id_val = value["id"]
+
+        if type == "user":
+            for e in self.users:
+                if e["id"] == id:
+                    break
+            else:
+                slef.users = value
+
+        if type == "device":
+            for n, e in enumerate(self.devices):
+                if e["id"] == id:
+                    self.devices[n]["timestamp"] = value["timestamp"]
+                    break
+            else:
+                slef.users = value
+
+        if type == "service":
+            for n, e in enumerate(self.services):
+                if e["id"] == id:
+                    self.services[n]["timestamp"] = value["timestamp"]
+                    break
+            else:
+                slef.users = value
+
+        
 
     @staticmethod
     def search_id(list_, id):

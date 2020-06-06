@@ -168,29 +168,30 @@ class NomeClasse():
     def cerca_value(self, value, type):
 
         id_val = value["id"]
+        print(id_val) #######################
 
         if type == "user":
             for e in self.users:
-                if e["id"] == id:
+                if e["id"] == id_val:
                     break
             else:
-                slef.users = value
+                self.users = value
 
         if type == "device":
             for n, e in enumerate(self.devices):
-                if e["id"] == id:
+                if e["id"] == id_val:
                     self.devices[n]["timestamp"] = value["timestamp"]
                     break
             else:
-                slef.users = value
+                self.devices = value
 
         if type == "service":
             for n, e in enumerate(self.services):
-                if e["id"] == id:
+                if e["id"] == id_val:
                     self.services[n]["timestamp"] = value["timestamp"]
                     break
             else:
-                slef.users = value
+                self.services = value
 
         
 

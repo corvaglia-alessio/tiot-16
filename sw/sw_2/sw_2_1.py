@@ -2,8 +2,20 @@ import cherrypy as cp
 import os
 import sys
 import json
-import time #   time.ctime(time.time()) restituisce qualcosa che hai gia' visto 
-            #   e rivedeitelo se non te lo ricordi
+import time 
+import threading
+
+class Loop(threading.Thread):
+
+    def __init__(self, time, obj):
+        threading.Thread.__init__(self)
+        self.time = time
+        self.obj = obj
+
+    def run(self):
+        while True:
+            self.obj.delate_old()
+            time.sleep(self.time)
 
 class Catalog():
     exposed = True
@@ -32,9 +44,9 @@ class Catalog():
         with open(self.file, "r") as f:
             diz = json.loads(f.read())
         
-        self.devices.append(diz["devices"])
-        self.users.append(diz["users"])
-        self.services.append(diz["services"])
+        self.devices = diz["devices"]
+        self.users = diz["users"]
+        self.services = diz["services"]
 
     def salva_values(self):
         """
@@ -56,7 +68,6 @@ class Catalog():
     def cerca_value(self, value, type):
 
         id_val = value["id"]
-        print(id_val) #######################
 
         if type == "user":
             for e in self.users:
@@ -98,18 +109,22 @@ class Catalog():
             Prende in input time.time() e restituisce i minuti
         """
 
-        return time.ctime(tempo).split()[3].split(":")[1]
+        return int(time.ctime(tempo).split()[3].split(":")[1])
 
     def delate_old(self):
         """
             Metodo che elimina gli elementi con timestamp maggiore di un det valore
         """
         time_ = time.time()
-
-        for lis in [self.devices, self.services]:
-            for n, e in enumerate(lis):
-                if get_min(time) - get_min(e["timestamp"]) >= 2:
-                    lis.pop(n)
+        if len(self.devices) > 0:
+            for n, e in enumerate(self.devices):
+                if Catalog.get_min(time_) - Catalog.get_min(e.get("timestamp")) >= 2:
+                    self.devices.pop(n)
+        if len(self.services) > 0:           
+            for n, e in enumerate(self.services):
+                if Catalog.get_min(time_) - Catalog.get_min(e.get("timestamp")) >= 2:
+                    self.services.pop(n)
+        self.salva_values()
                 
 
     def GET(self, *uri, **params):
@@ -205,8 +220,10 @@ if __name__ == "__main__":
                             'tools.staticdir.root': os.path.abspath(os.getcwd())
                         }
             }
-
-    cp.tree.mount(Catalog("mqtt.eclipse.org", port=1883), '/', conf)
+    catalog = Catalog("mqtt.eclipse.org", port=1883)
+    loop = Loop(2*60, catalog)
+    loop.start()
+    cp.tree.mount(catalog, '/', conf)
     cp.config.update({'server.socket_port':9090})
     cp.engine.start()
     cp.engine.block()

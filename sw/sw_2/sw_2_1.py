@@ -5,49 +5,112 @@ import json
 import time #   time.ctime(time.time()) restituisce qualcosa che hai gia' visto 
             #   e rivedeitelo se non te lo ricordi
 
-class NomeClasse():
+class Catalog():
     exposed = True
     file = "values.json"
     
     def __init__(self, domain, ip="", port=""):
-        self._messagebroker =   {
+        self.messagebroker =   {
                                 "domain":domain,
                                 "ip":ip,
                                 "port":port
                                 }
+        self.devices = list()
+        self.users = list()
+        self.services = list()
+
         self.leggi_values()
+    
+    def leggi_values(self):
+        """
+            Legge i valori salvati nel file
 
-    @property
-    def messagebroker(self):
-        return self._messagebroker
+            probabilmente servira un semafor se implementiamo i thread
+            reader e writer tornano AMEN
+        """
 
-    @messagebroker.setter
-    def messagebroker(self, messagebroker):
-        self._messagebroker = messagebroker
+        with open(self.file, "r") as f:
+            diz = json.loads(f.read())
+        
+        self.devices.append(diz["devices"])
+        self.users.append(diz["users"])
+        self.services.append(diz["services"])
 
-    @property
-    def devices(self):
-        return self._devices
+    def salva_values(self):
+        """
+            Scrive i valori su file
 
-    @devices.setter
-    def devices(self, devices):
-        self._devices.append(devices)
+            probabilmente servira un semafor se implementiamo i thread
+            reader e writer tornano AMEN
+        """
 
-    @property
-    def users(self):
-        return self._users
+        diz = {
+                "users":self.users,
+                "devices":self.devices,
+                "services":self.services
+              }
 
-    @users.setter
-    def users(self, users):
-        self._users.append(users)
+        with open(self.file, "w") as f:
+            f.write(f"{json.dumps(diz)}")
 
-    @property
-    def services(self):
-        return self._services
+    def cerca_value(self, value, type):
 
-    @services.setter
-    def services(self, services):
-        self._services.append(services)
+        id_val = value["id"]
+        print(id_val) #######################
+
+        if type == "user":
+            for e in self.users:
+                if e["id"] == id_val:
+                    break
+            else:
+                self.users.append(value)
+
+        if type == "device":
+            for n, e in enumerate(self.devices):
+                if e["id"] == id_val:
+                    self.devices[n]["timestamp"] = value["timestamp"]
+                    break
+            else:
+                self.devices.append(value)
+
+        if type == "service":
+            for n, e in enumerate(self.services):
+                if e["id"] == id_val:
+                    self.services[n]["timestamp"] = value["timestamp"]
+                    break
+            else:
+                self.services.append(value)
+
+    @staticmethod
+    def search_id(list_, id):
+        """
+            Metodo statico 
+            restituisce l'elemento nella lista con un determinato id
+        """
+        for d in list_:
+            if d["id"] == id:
+                return d
+        return None
+
+    @staticmethod
+    def get_min(tempo):
+        """
+            Prende in input time.time() e restituisce i minuti
+        """
+
+        return time.ctime(tempo).split()[3].split(":")[1]
+
+    def delate_old(self):
+        """
+            Metodo che elimina gli elementi con timestamp maggiore di un det valore
+        """
+        time_ = time.time()
+
+        for lis in [self.devices, self.services]:
+            for n, e in enumerate(lis):
+                if get_min(time) - get_min(e["timestamp"]) >= 2:
+                    lis.pop(n)
+                
 
     def GET(self, *uri, **params):
         """ Metodo GET
@@ -71,7 +134,7 @@ class NomeClasse():
             if len(uri) == 1:
                 return json.dumps({"devices":self.devices}, indent=4)
             else:
-                device = NomeClasse.search_id(self.devices, uri[1])
+                device = Catalog.search_id(self.devices, uri[1])
                 if device == None:
                     device = f"<h1>Nessun dispositivo trovato con l'id {uri[1]}</h1>"
                 else:
@@ -82,7 +145,7 @@ class NomeClasse():
             if len(uri) == 1:
                 return json.dumps({"users":self.users}, indent=4)
             else:
-                user = NomeClasse.search_id(self.users, uri[1])
+                user = Catalog.search_id(self.users, uri[1])
                 if user == None:
                     user = f"<h1>Nessun dutente trovato con l'id {uri[1]}</h1>"
                 else:
@@ -93,7 +156,7 @@ class NomeClasse():
             if len(uri) == 1:
                 return json.dumps({"services":self.services}, indent=4)
             else:
-                service = NomeClasse.search_id(self.services, uri[1])
+                service = Catalog.search_id(self.services, uri[1])
                 if service == None:
                     service = f"<h1>Nessun servizio trovato con l'id {uri[1]}</h1>"
                 else:
@@ -133,75 +196,6 @@ class NomeClasse():
         else:
             cp.HTTPError(404, "Not found")
 
-    def leggi_values(self):
-        """
-            Legge i valori salvati nel file
-
-            probabilmente servira un semafor se implementiamo i thread
-            reader e writer tornano AMEN
-        """
-
-        with open(self.file, "r") as f:
-            diz = json.loads(f.read())
-        
-        self._devices = diz["devices"]
-        self._users = diz["users"]
-        self._services = diz["services"]
-    
-    def salva_values(self):
-        """
-            Scrive i valori su file
-
-            probabilmente servira un semafor se implementiamo i thread
-            reader e writer tornano AMEN
-        """
-
-        diz = {
-                "users":self.users,
-                "devices":self.devices,
-                "services":self.services
-              }
-
-        with open(self.file, "w") as f:
-            f.write(f"{json.dumps(diz)}")
-
-    def cerca_value(self, value, type):
-
-        id_val = value["id"]
-        print(id_val) #######################
-
-        if type == "user":
-            for e in self.users:
-                if e["id"] == id_val:
-                    break
-            else:
-                self.users = value
-
-        if type == "device":
-            for n, e in enumerate(self.devices):
-                if e["id"] == id_val:
-                    self.devices[n]["timestamp"] = value["timestamp"]
-                    break
-            else:
-                self.devices = value
-
-        if type == "service":
-            for n, e in enumerate(self.services):
-                if e["id"] == id_val:
-                    self.services[n]["timestamp"] = value["timestamp"]
-                    break
-            else:
-                self.services = value
-
-        
-
-    @staticmethod
-    def search_id(list_, id):
-        for d in list_:
-            if d["id"] == id:
-                return d
-        return None
-
 if __name__ == "__main__":
     
     conf =  {
@@ -212,7 +206,7 @@ if __name__ == "__main__":
                         }
             }
 
-    cp.tree.mount(NomeClasse("prova"), '/', conf)
+    cp.tree.mount(Catalog("mqtt.eclipse.org", port=1883), '/', conf)
     cp.config.update({'server.socket_port':9090})
     cp.engine.start()
     cp.engine.block()

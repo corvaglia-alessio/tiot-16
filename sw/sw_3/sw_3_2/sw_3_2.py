@@ -48,9 +48,11 @@ class Service():
         self.myMqttClient.myPublish(f"/tiot/16/GET/devices/{id_}")
 
     def notify(self, topic, msg):
-        type_ = ""
-        if len(topic.split("/")) > 3:
+        len_ = len(topic.split("/"))
+        if len_ > 4:
             type_ = topic.split("/")[4]
+        else:
+            type_ = ""
 
         if type_ == "devices":
             endpoint = json.loads(msg)["endpoint"][0]

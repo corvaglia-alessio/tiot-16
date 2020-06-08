@@ -1,1 +1,1 @@
-{"users": [], "devices": [], "services": [{"id": "gp16service", "description": "Service MQTT", "endpoint": ["/tiot/16/service"], "timestamp": 1591640319.985128}]}
+{"users": [], "devices": [{"id": "Y\u00f9n - Gruppo 16", "descriptio": "TEMPERATURA", "endpoint": ["/tiot/16/temperature"], "timestamp": 1591641006.156019}], "services": [{"id": "gp16service", "description": "Service MQTT", "endpoint": ["/tiot/16/service"], "timestamp": 1591641009.623314}]}

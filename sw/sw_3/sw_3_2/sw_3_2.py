@@ -7,7 +7,7 @@ import threading
 import requests
 from MyMQTT import MyMQTT
 
-url = 'http://127.0.0.1:9090/newservice'
+url = 'http://127.0.0.1:9090/messagebroker'
 #"/tiot/16/PUT/newservice"    "mqtt.eclipse.org"
 
 class Loop(threading.Thread):
@@ -27,60 +27,50 @@ class Loop(threading.Thread):
         self.myMqttClient.start()
 
     def run(self):
-        """
-        while True:
-            response = requests.put(url, data=json.dumps(self.request_json))
-            print(response.status_code)
-            time.sleep(self.time)
-        """
-
-
+        self.myMqttClient.myPublish("/tiot/16/PUT/newservice", (json.dumps(self.request_json, indent=4)))
+        time.sleep(self.time)
 
 class Service():
     exposed = True
     
-    def __init__(self):
+    def __init__(self, id_):
+        """
         self.values_arduino_yun = list()
-
-    def GET(self, *uri, **params):
-        """ Metodo GET
-            Restituisce la lista di valori rilevati dall' Arduino Yun
         """
 
-        if uri[0] == 'log':
-            return f"{self.values_arduino_yun}"
-        else:
-            cp.HTTPError(404, "Risorsa not found!")
+        response = requests.get('http://127.0.0.1:9090/messagebroker')
+        self.broker = response.text["domain"]
+        self.port = response.text["port"]
 
-    def POST(self, *uri, **params):
-        """ Metodo POST
-            salva i valori rilevati dall' Arduino Yun
-        """
+        self.myMqttClient = MyMQTT(id_, self.broker, self.port, self)
+        self.myMqttClient.start()
+        self.myMqttClient.mySubscribe("/tiot/16/GET/devices/+/response")
+
+    
+    def info_device(self, id_):
+        self.myMqttClient.myPublish(f"/tiot/16/GET/devices/{id_}")
+
+    def notify(self, topic, msg):
+        type_ = topic.split("/")[4]
+
+        if type_ == "devices":
+            endpoint = msg["endpoint"][0]
+            self.myMqttClient.mySubscribe(endpoint)
+        elif topic.split("/")[3] == "temperature":
+            print(msg)
         
-        if uri[0] == 'log':
-            self.values_arduino_yun.append(cp.request.body.read())
-        else:
-            cp.HTTPError(404, "Risorsa not found!")
-        
+
 
 if __name__ == "__main__":
-    conf =  {
-                '/':    {
-                            'request.dispatch': cp.dispatch.MethodDispatcher()
-                        }
-            }
-
     id_ = "gp16"
-    description = "Service riceve nel body della POST le informazioni dei vari devices e restituisce i valori salvati tramite request GET"
-    endpoint = ["GET https://127.0.0.1:9010/log", "POST https://127.0.0.1:9010/log"]
+    description = "Service MQTT"
+    endpoint = ["/tiot/16/service"]
 
 
-    service = Service()
+    service = Service(id_=id_)
+    broker = service.broker
+    port = service.port
+    service.info_device(id_="Yùn - Gruppo 16")
 
-    loop_request = Loop(1*60, id_=id_, description=description, endpoint=endpoint)
+    loop_request = Loop(1*60, id_=id_, description=description, endpoint=endpoint, broker=broker, port=port)
     loop_request.start()
-
-    cp.tree.mount(service, '/', conf)
-    cp.config.update({'server.socket_port':9010})
-    cp.engine.start()
-    cp.engine.block()

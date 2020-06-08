@@ -234,5 +234,5 @@ if __name__ == "__main__":
     cp.engine.start()
     cp.engine.block()
 
-#{"users":[],"devices":[],"services":[]}
+#{"users": [],"devices": [],"services": []}
 #{"id":"123Stella","nome":"Marco","surname":"Manco","email":"prova@lab.com"}

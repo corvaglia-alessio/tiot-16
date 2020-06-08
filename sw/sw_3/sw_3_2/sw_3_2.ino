@@ -62,7 +62,7 @@ double temp_read(){
 String encode_disp(){
   doc_snd2.clear();
   doc_snd2["id"] = "Yùn - Gruppo 16";
-  doc_snd2["endpoint"]=["/tiot/16/temperature"];
+  doc_snd2["endpoint"][0]="/tiot/16/temperature";
   doc_snd2["resource"]="Temperature";
   String out;
   serializeJson(doc_snd2, out);

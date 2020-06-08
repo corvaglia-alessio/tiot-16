@@ -87,37 +87,37 @@ class Catalog():
             self.myMqttClient.myPublish ("/tiot-16/GET/messagebroker/response", (json.dumps(self.messagebroker, indent=4)))
 
         elif uri[2] == "devices":
-			if uri[0] == 5:
-				self.myMqttClient.myPublish ("/tiot-16/GET/devices/response", (json.dumps({"devices":self.devices}, indent=4)))
-			else:
-				device = Catalog.search_id(self.devices, uri[3])
-				if device == None:
-					device = f"<h1>Nessun dispositivo trovato con l'id {uri[3]}</h1>"
-				else:
-					device = json.dumps(device, indent=4)
-				self.myMqttClient.myPublish (f"/tiot-16/GET/devices/{uri[3]}/response", (device))
+            if uri[0] == 5:
+                self.myMqttClient.myPublish ("/tiot-16/GET/devices/response", (json.dumps({"devices":self.devices}, indent=4)))
+            else:
+                device = Catalog.search_id(self.devices, uri[3])
+                if device == None:
+                    device = f"<h1>Nessun dispositivo trovato con l'id {uri[3]}</h1>"
+                else:
+                    device = json.dumps(device, indent=4)
+                self.myMqttClient.myPublish (f"/tiot-16/GET/devices/{uri[3]}/response", (device))
 
         elif uri[2] == "users":
             if uri[0] == 5:
-				self.myMqttClient.myPublish ("/tiot-16/GET/users/response", (json.dumps({"users":self.users}, indent=4)))
+                self.myMqttClient.myPublish ("/tiot-16/GET/users/response", (json.dumps({"users":self.users}, indent=4)))
             else:
-				user = Catalog.search_id(self.users, uri[3])
-				if user == None:
-					user = f"<h1>Nessun utente trovato con l'id {uri[3]}</h1>"
-				else:
-					user = json.dumps(user, indent=4)
-				self.myMqttClient.myPublish (f"/tiot-16/GET/users/{uri[3]}/response", (user))
-                
+                user = Catalog.search_id(self.users, uri[3])
+                if user == None:
+                    user = f"<h1>Nessun utente trovato con l'id {uri[3]}</h1>"
+                else:
+                    user = json.dumps(user, indent=4)
+                self.myMqttClient.myPublish (f"/tiot-16/GET/users/{uri[3]}/response", (user))
+        
         elif uri[2] == "services":
             if uri[0] == 5:
-				self.myMqttClient.myPublish ("/tiot-16/GET/services/response", (json.dumps({"services":self.services}, indent=4)))
+                self.myMqttClient.myPublish ("/tiot-16/GET/services/response", (json.dumps({"services":self.services}, indent=4)))
             else:
-				service= Catalog.search_id(self.services, uri[3])
-				if service == None:
-					service = f"<h1>Nessun service trovato con l'id {uri[3]}</h1>"
-				else:
-					service = json.dumps(service, indent=4)
-				self.myMqttClient.myPublish (f"/tiot-16/GET/services/{uri[3]}/response", (service))
+                service= Catalog.search_id(self.services, uri[3])
+                if service == None:
+                    service = f"<h1>Nessun service trovato con l'id {uri[3]}</h1>"
+                else:
+                    service = json.dumps(service, indent=4)
+                self.myMqttClient.myPublish (f"/tiot-16/GET/services/{uri[3]}/response", (service))
     
     def put_mqtt(self, uri, params):
 

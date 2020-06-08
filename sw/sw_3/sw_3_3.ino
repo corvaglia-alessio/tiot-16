@@ -17,7 +17,7 @@
 #define MSEC 1e03
 
 const int cap = JSON_OBJECT_SIZE(2)+JSON_ARRAY_SIZE(1)+JSON_OBJECT_SIZE(4)+40;
-DynamicJsonDocument doc_snd(cap);
+
 DynamicJsonDocument doc_snd2(cap);
 DynamicJsonDocument doc_rcv(cap);
 
@@ -35,56 +35,43 @@ void setup() {
   digitalWrite(LED_INT_PIN, HIGH);
 
   mqtt.begin("mqtt.eclipse.org", 1883);
-
+  mqtt.subscribe("/tiot/16/led", changeLedValue);
 }
 
 void loop() {
   
   mqtt.monitor();
-  double temp = temp_read();
-  
-  String data = encode_sen_ml("temperature", temp, "°C");
-  Serial.println(data);
-  mqtt.publish("/tiot/16/temperature", data);
   String jsondisp = encode_disp();
   mqtt.publish("/tiot/16/PUT/newdevice",jsondisp);
   delay(2*MSEC);
   }
 
-
-double temp_read(){
-  double reading = (double) analogRead(TEMP_PIN);
-  double r = R(reading);
-  double t = T(r) - K;
-  return t;
-}
-
 String encode_disp(){
   doc_snd2.clear();
   doc_snd2["id"] = "Yùn - Gruppo 16";
-  doc_snd2["endpoint"]=["/tiot/16/temperature"];
-  doc_snd2["resource"]="Temperature";
+  doc_snd2["endpoint"]=["/tiot/16/led"];
+  doc_snd2["resource"]="Led";
   String out;
   serializeJson(doc_snd2, out);
   return out;
 }
+//"{"bn": "Yun", "e": [{  "n" : "led","t": null, "v" : 1, "u":null}]}"
 
-String encode_sen_ml(String sensor, double value, String unit){
-  doc_snd.clear();
-  doc_snd["bn"] = "Yùn - Gruppo 16";
-  
-  doc_snd["e"][0]["n"] = sensor;
-  doc_snd["e"][0]["t"] = millis();
-  doc_snd["e"][0]["v"] = value;
-  
-  if(unit != ""){
-    doc_snd["e"][0]["u"]=unit;
+void changeLedValue(const String& topic, const String& subtopic, const String& message){
+  DeserializationError e = deserializeJson(doc_rcv, message);
+  if(e){
+    Serial.print("Deserializion failed with code");
+    Serial.println(e.c_str());
   }
   else{
-    doc_snd["e"][0]["u"]=(char*)NULL;
+    if(doc_rcv["e"][0]["n"]=="led"){
+      int statuss = (int) doc_rcv["e"][0]["v"];
+      if(statuss == 0 || statuss == 1){
+          digitalWrite(LED_PIN, statuss);
+      }
+      else{
+        Serial.print("Error: status for led not valid");
+      }
+    }
   }
-  
-  String out;
-  serializeJson(doc_snd, out);
-  return out;
 }

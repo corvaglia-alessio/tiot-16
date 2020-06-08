@@ -4,6 +4,7 @@ import sys
 import json
 import time 
 import threading
+from MyMQTT import MyMQTT
 
 class Loop(threading.Thread):
 
@@ -33,7 +34,113 @@ class Catalog():
         self.services = list()
 
         self.leggi_values()
+
+        self.clientID = "tiot-16"
+        self.myMqttClient = MyMQTT(self.clientID, "mqtt.eclipse.org", 1883, self)
+        self.run()
+        self.myMqttClient.mySubscribe("/tiot/16/GET")
+        self.myMqttClient.mySubscribe("/tiot/16/GET/messagebroker")
+        self.myMqttClient.mySubscribe("/tiot/16/GET/devices/+")
+        self.myMqttClient.mySubscribe("/tiot/16/GET/users/+")
+        self.myMqttClient.mySubscribe("/tiot/16/GET/services/+")
+        self.myMqttClient.mySubscribe("/tiot/16/GET/devices")
+        self.myMqttClient.mySubscribe("/tiot/16/GET/devices")
+        self.myMqttClient.mySubscribe("/tiot/16/PUT/newdevice")
+        self.myMqttClient.mySubscribe("/tiot/16/PUT/newuser")
+        self.myMqttClient.mySubscribe("/tiot/16/PUT/newservice")
+
+    def run(self):
+        print ("running Catalog MQTT %s" % (self.clientID))
+        self.myMqttClient.start()
+
+    def end(self):
+        print ("ending %s" % (self.clientID))
+        self.myMqttClient.stop()
+
+    def notify(self, topic, msg):
+
+        request_type = topic.split("/")[3]
+        type_ = topic.split("/")[4]
+        ot = len(topic.split("/"))
+        id_ = topic.split("/")[5] if ot == 6 else ""
+
+        if request_type == "GET":
+            self.get_mqtt([ot, request_type, type_, id_], msg)
+        else:
+            self.put_mqtt([ot, request_type, type_, id_], msg)
+
+
+    def get_mqtt(self, uri, params):
+
+        if uri[0] == 4:
+            
+            self.myMqttClient.myPublish ("/tiot/16/GET/response", (""" <h1>LAB parte 2 software</h1>
+                        <strong>Membri del gruppo:</strong>
+                        <ul>
+                            <li>Corvaglia Alessio</li>
+                            <li>Manco Marco</li>
+                            <li>Manco Davide</li>
+                        </ul>
+                    """))
+
+        if uri[2] == "messagebroker":
+            self.myMqttClient.myPublish ("/tiot/16/GET/messagebroker/response", (json.dumps(self.messagebroker, indent=4)))
+
+        elif uri[2] == "devices":
+            if uri[0] == 5:
+                self.myMqttClient.myPublish ("/tiot/16/GET/devices/response", (json.dumps({"devices":self.devices}, indent=4)))
+            else:
+                device = Catalog.search_id(self.devices, uri[3])
+                if device == None:
+                    device = f"<h1>Nessun dispositivo trovato con l'id {uri[3]}</h1>"
+                else:
+                    device = json.dumps(device, indent=4)
+                self.myMqttClient.myPublish (f"/tiot/16/GET/devices/{uri[3]}/response", (device))
+
+        elif uri[2] == "users":
+            if uri[0] == 5:
+                self.myMqttClient.myPublish ("/tiot/16/GET/users/response", (json.dumps({"users":self.users}, indent=4)))
+            else:
+                user = Catalog.search_id(self.users, uri[3])
+                if user == None:
+                    user = f"<h1>Nessun utente trovato con l'id {uri[3]}</h1>"
+                else:
+                    user = json.dumps(user, indent=4)
+                self.myMqttClient.myPublish (f"/tiot/16/GET/users/{uri[3]}/response", (user))
+        
+        elif uri[2] == "services":
+            if uri[0] == 5:
+                self.myMqttClient.myPublish ("/tiot/16/GET/services/response", (json.dumps({"services":self.services}, indent=4)))
+            else:
+                service= Catalog.search_id(self.services, uri[3])
+                if service == None:
+                    service = f"<h1>Nessun service trovato con l'id {uri[3]}</h1>"
+                else:
+                    service = json.dumps(service, indent=4)
+                self.myMqttClient.myPublish (f"/tiot/16/GET/services/{uri[3]}/response", (service))
     
+    def put_mqtt(self, uri, params):
+
+        if uri[2] == "newdevice":
+            body = json.loads(params.decode("utf-8"))
+            body["timestamp"] = time.time()
+            self.cerca_value(body, "device")
+
+            self.salva_values()
+                
+        elif uri[2] == "newuser":
+            body = json.loads(params.decode("utf-8"))
+            self.cerca_value(body, "user")
+
+            self.salva_values()
+
+        elif uri[2] == "newservice":
+            body = json.loads(params.decode("utf-8"))
+            body["timestamp"] = time.time()
+            self.cerca_value(body, "service")
+
+            self.salva_values()
+
     def leggi_values(self):
         """
             Legge i valori salvati nel file

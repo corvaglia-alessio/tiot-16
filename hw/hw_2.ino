@@ -163,7 +163,7 @@ void setup()
     attachInterrupt(digitalPinToInterrupt(PIR_PIN), people_in_room_pir, CHANGE);
 
      // NOISE
-    attachInterrupt(digitalPinToInterrupt(NOISE_PIN), accendi_battiti;, LOW);
+    attachInterrupt(digitalPinToInterrupt(NOISE_PIN), accendi_battiti, LOW);
 }
 
 void loop()

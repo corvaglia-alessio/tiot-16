@@ -20,6 +20,7 @@ class Loop(threading.Thread):
 class Catalog():
     exposed = True
     file = "values.json"
+    thread_lock = threading.Lock()
     
     def __init__(self, domain, ip="", port=""):
         self.messagebroker =   {
@@ -40,13 +41,15 @@ class Catalog():
             probabilmente servira un semafor se implementiamo i thread
             reader e writer tornano AMEN
         """
-
+        self.thread_lock.acquire()
         with open(self.file, "r") as f:
             diz = json.loads(f.read())
         
         self.devices = diz["devices"]
         self.users = diz["users"]
         self.services = diz["services"]
+
+        self.thread_lock.release()
 
     def salva_values(self):
         """
@@ -56,14 +59,17 @@ class Catalog():
             reader e writer tornano AMEN
         """
 
+        self.thread_lock.acquire()
         diz = {
                 "users":self.users,
                 "devices":self.devices,
                 "services":self.services
               }
-
+        
         with open(self.file, "w") as f:
             f.write(f"{json.dumps(diz)}")
+
+        self.thread_lock.release()
 
     def cerca_value(self, value, type):
 

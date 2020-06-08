@@ -29,21 +29,24 @@ void setup() {
   pinMode(TEMP_PIN, INPUT);
   pinMode(LED_INT_PIN, OUTPUT);
 
-  digitalWrite(LED_INT_PIN, 0);
+  digitalWrite(LED_PIN, LOW);
   Bridge.begin();
-  digitalWrite(LED_INT_PIN, 1);
+  digitalWrite(LED_INT_PIN, HIGH);
 
-  mqtt.begin("test.mosquitto.org", 1883);
-  mqtt.subscribe("tiot/16/led", changeLedValue);
+  mqtt.begin("mqtt.eclipse.org", 1883);
+  mqtt.subscribe("/tiot/16/led", changeLedValue);
 }
 
 void loop() {
+  
   mqtt.monitor();
   double temp = temp_read();
+  
   String data = encode_sen_ml("temperature", temp, "°C");
-  mqtt.publish("tiot/16/temperature", data);
-  delay(DELAY*MSEC);
-}
+  Serial.println(data);
+  mqtt.publish("/tiot/16/temperature", data);
+  delay(2*MSEC);
+  }
 
 void changeLedValue(const String& topic, const String& subtopic, const String& message){
   DeserializationError e = deserializeJson(doc_rcv, message);
@@ -53,9 +56,9 @@ void changeLedValue(const String& topic, const String& subtopic, const String& m
   }
   else{
     if(doc_rcv["e"][0]["n"]=="led"){
-      int status = (int) doc_rcv["e"][0]["v"];
-      if(status == 0 || status == 1){
-          digitalWrite(LED_PIN, status);
+      int statuss = (int) doc_rcv["e"][0]["v"];
+      if(statuss == 0 || statuss == 1){
+          digitalWrite(LED_PIN, statuss);
       }
       else{
         Serial.print("Error: status for led not valid");

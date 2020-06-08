@@ -49,7 +49,7 @@ void loop() {
 String encode_disp(){
   doc_snd2.clear();
   doc_snd2["id"] = "Yùn - Gruppo 16";
-  doc_snd2["endpoint"]="/tiot/16/led";
+  doc_snd2["endpoint"]=["/tiot/16/led"];
   doc_snd2["resource"]="Led";
   String out;
   serializeJson(doc_snd2, out);

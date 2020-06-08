@@ -14,7 +14,7 @@ class Loop(threading.Thread):
 
     def run(self):
         while True:
-            self.obj.delate_old()
+            self.obj.delete_old()
             time.sleep(self.time)
 
 class Catalog():
@@ -37,9 +37,6 @@ class Catalog():
     def leggi_values(self):
         """
             Legge i valori salvati nel file
-
-            probabilmente servira un semafor se implementiamo i thread
-            reader e writer tornano AMEN
         """
         self.thread_lock.acquire()
         with open(self.file, "r") as f:
@@ -54,9 +51,6 @@ class Catalog():
     def salva_values(self):
         """
             Scrive i valori su file
-
-            probabilmente servira un semafor se implementiamo i thread
-            reader e writer tornano AMEN
         """
 
         self.thread_lock.acquire()
@@ -117,7 +111,7 @@ class Catalog():
 
         return int(time.ctime(tempo).split()[3].split(":")[1])
 
-    def delate_old(self):
+    def delete_old(self):
         """
             Metodo che elimina gli elementi con timestamp maggiore di un det valore
         """
@@ -168,7 +162,7 @@ class Catalog():
             else:
                 user = Catalog.search_id(self.users, uri[1])
                 if user == None:
-                    user = f"<h1>Nessun dutente trovato con l'id {uri[1]}</h1>"
+                    user = f"<h1>Nessun utente trovato con l'id {uri[1]}</h1>"
                 else:
                     user = json.dumps(user, indent=4)
                 return user

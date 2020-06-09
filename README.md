@@ -2,7 +2,7 @@
 
 ## Dialogare con il Catalog (sw_2, sw_3)
 
-Per ottenere informazioni sugli **endpoint** del _Catalog_ e sulla **struttura json** da introdurre nel body delle richieste PUT, facendo una richiesta all'indirizzo del catalog (_nel nostro caso lavorando in locale 127.0.0.1_) e alla porta 9090. Il catalog restituirà un json con la seguente struttura:
+Per ottenere informazioni sugli **endpoint** del _Catalog_ e sulla **struttura json** da introdurre nel body delle richieste PUT, facendo una richiesta all'indirizzo del catalog (_nel nostro caso lavorando in locale `127.0.0.1`_) e alla porta `9090`. Il catalog restituirà un json con la seguente struttura:
 
 ![alt text](https://github.com/corvaglia-alessio/tiot-16/tree/master/img/schema_richiesta_home.png "Schema UML")
 
@@ -29,10 +29,8 @@ Per ottenere informazioni sugli **endpoint** del _Catalog_ e sulla **struttura j
 "/tiot/16/GET/services/<id>",
 "/tiot/16/PUT/newdevice",
 "/tiot/16/PUT/newuser",
-"/tiot/16/PUT/newservice",
-],
-"description":"
-Struttura del body/json per le varie richieste PUT:
+"/tiot/16/PUT/newservice"],
+"description":"Struttura del body/json per le varie richieste PUT:
 newdevice:	{"id":"<id>", "endpoint":["<endpoint>", ..], "resurce":"<resurce>"}
 newservice:	{"id":"<id>", "endpoint":["<endpoint>", ..], "resurce":"<resurce>"}
 newsuser:	{"id":"<id>", "name":"<name>", "surname":"<surname>", "email":"<email>"}
@@ -41,3 +39,28 @@ Le response per richieste MQTT sono pubblicate sui topic:
 /tiot/16/GET/+/+/response"
 }
 ```
+
+Più in particolare:
+
+| HOST | PORT | PATH | PROTOCOL | REQUEST | TOPIC | BODY |
+| --- | --- | --- | --- | --- | --- | --- |
+| 127.0.0.1 | 9090 | /messagebroker | HTTP | GET | | |
+| 127.0.0.1 | 9090 | /devices | HTTP | GET | | |
+| 127.0.0.1 | 9090 | /devices/<id> | HTTP | GET | | |
+| 127.0.0.1 | 9090 | /users | HTTP | GET | | |
+| 127.0.0.1 | 9090 | /users/<id> | HTTP | GET | | |
+| 127.0.0.1 | 9090 | /services | HTTP | GET | | |
+| 127.0.0.1 | 9090 | /services/<id> | HTTP | GET | | |
+| 127.0.0.1 | 9090 | /newdevice | HTTP | PUT | | {"id":"<id>", "endpoint":["<endpoint>", ..], "resurce":"<resurce>"} |
+| 127.0.0.1 | 9090 | /newuser | HTTP | PUT | | {"id":"<id>", "name":"<name>", "surname":"<surname>", "email":"<email>"} |
+| 127.0.0.1 | 9090 | /newservice | HTTP | PUT | | {"id":"<id>", "endpoint":["<endpoint>", ..], "resurce":"<resurce>"} |
+|  |  |  | MQTT | | /tiot/16/GET/messagebroker | |
+|  |  |  | MQTT | | /tiot/16/GET/devices | |
+|  |  |  | MQTT | | /tiot/16/GET/devices/<id> | |
+|  |  |  | MQTT | | /tiot/16/GET/users | |
+|  |  |  | MQTT | | /tiot/16/GET/users/<id> | |
+|  |  |  | MQTT | | /tiot/16/GET/services | |
+|  |  |  | MQTT | | /tiot/16/GET/services/<id> | |
+|  |  |  | MQTT | | /tiot/16/PUT/newdevice | {"id":"<id>", "endpoint":["<endpoint>", ..], "resurce":"<resurce>"} |
+|  |  |  | MQTT | | /tiot/16/PUT/newuser | {"id":"<id>", "name":"<name>", "surname":"<surname>", "email":"<email>"} |
+|  |  |  | MQTT | | /tiot/16/PUT/newservice | {"id":"<id>", "endpoint":["<endpoint>", ..], "resurce":"<resurce>"} |

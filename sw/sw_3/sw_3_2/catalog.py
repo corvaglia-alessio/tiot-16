@@ -6,6 +6,51 @@ import time
 import threading
 from MyMQTT import MyMQTT
 
+info = """{
+"gruppo":"Gruppo tiot 16",
+"membri":["Marco Manco", "Alessio Corvaglia", "Davide Manco"],
+"endpoint":["GET 127.0.0.1:9090/messagebroker",
+"GET 127.0.0.1:9090/devices",
+"GET 127.0.0.1:9090/devices/<id>",
+"GET 127.0.0.1:9090/users",
+"GET 127.0.0.1:9090/users/<id>",
+"GET 127.0.0.1:9090/services",
+"GET 127.0.0.1:9090/services/<id>",
+"PUT 127.0.0.1:9090/newdevice",
+"PUT 127.0.0.1:9090/newuser",
+"PUT 127.0.0.1:9090/newservice",
+"/tiot/16/GET/messagebroker",
+"/tiot/16/GET/devices",
+"/tiot/16/GET/devices/<id>",
+"/tiot/16/GET/users",
+"/tiot/16/GET/users/<id>",
+"/tiot/16/GET/services",
+"/tiot/16/GET/services/<id>",
+"/tiot/16/PUT/newdevice",
+"/tiot/16/PUT/newuser",
+"/tiot/16/PUT/newservice",
+],
+"description":"
+Struttura del body/json per le varie richieste PUT:
+newdevice:	{"id":"<id>",
+							 "endpoint":["<endpoint>", ..],
+							 "resurce":"<resurce>"
+							}
+newservice:	{"id":"<id>",
+							 "endpoint":["<endpoint>", ..],
+							 "resurce":"<resurce>"
+							}
+newsuser:	{"id":"<id>",
+							 "name":"<name>",
+							 "surname":"<surname>",
+							 "email":"<email>"
+							}
+Le response per richieste MQTT sono pubblicate sui topic:
+/tiot/16/GET/+/response
+/tiot/16/GET/+/+/response"
+}
+"""
+
 class Loop(threading.Thread):
 
     def __init__(self, time, obj):
@@ -74,14 +119,7 @@ class Catalog():
 
         if uri[0] == 4:
             
-            self.myMqttClient.myPublish ("/tiot/16/GET/response", (""" <h1>LAB parte 2 software</h1>
-                        <strong>Membri del gruppo:</strong>
-                        <ul>
-                            <li>Corvaglia Alessio</li>
-                            <li>Manco Marco</li>
-                            <li>Manco Davide</li>
-                        </ul>
-                    """))
+            self.myMqttClient.myPublish ("/tiot/16/GET/response", (info))
 
         if uri[2] == "messagebroker":
             self.myMqttClient.myPublish ("/tiot/16/GET/messagebroker/response", (json.dumps(self.messagebroker, indent=4)))
@@ -240,14 +278,7 @@ class Catalog():
         """
 
         if len(uri) == 0:
-            return  """ <h1>LAB parte 2 software</h1>
-                        <strong>Membri del gruppo:</strong>
-                        <ul>
-                            <li>Corvaglia Alessio</li>
-                            <li>Manco Marco</li>
-                            <li>Manco Davide</li>
-                        </ul>
-                    """
+            return info
 
         if uri[0] == "messagebroker":
             return json.dumps(self.messagebroker, indent=4)

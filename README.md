@@ -46,21 +46,21 @@ Più in particolare:
 | --- | --- | --- | --- | --- | --- | --- |
 | 127.0.0.1 | 9090 | /messagebroker | HTTP | GET | | |
 | 127.0.0.1 | 9090 | /devices | HTTP | GET | | |
-| 127.0.0.1 | 9090 | /devices/<id> | HTTP | GET | | |
+| 127.0.0.1 | 9090 | /devices/\<id\> | HTTP | GET | | |
 | 127.0.0.1 | 9090 | /users | HTTP | GET | | |
-| 127.0.0.1 | 9090 | /users/<id> | HTTP | GET | | |
+| 127.0.0.1 | 9090 | /users/\<id\> | HTTP | GET | | |
 | 127.0.0.1 | 9090 | /services | HTTP | GET | | |
-| 127.0.0.1 | 9090 | /services/<id> | HTTP | GET | | |
-| 127.0.0.1 | 9090 | /newdevice | HTTP | PUT | | {"id":"<id>", "endpoint":["<endpoint>", ..], "resurce":"<resurce>"} |
-| 127.0.0.1 | 9090 | /newuser | HTTP | PUT | | {"id":"<id>", "name":"<name>", "surname":"<surname>", "email":"<email>"} |
-| 127.0.0.1 | 9090 | /newservice | HTTP | PUT | | {"id":"<id>", "endpoint":["<endpoint>", ..], "resurce":"<resurce>"} |
+| 127.0.0.1 | 9090 | /services/\<id\> | HTTP | GET | | |
+| 127.0.0.1 | 9090 | /newdevice | HTTP | PUT | | {"id":"\<id\>", "endpoint":["\<endpoint\>", ..], "resurce":"\<resurce\>"} |
+| 127.0.0.1 | 9090 | /newuser | HTTP | PUT | | {"id":"\<id\>", "name":"\<name\>", "surname":"\<surname\>", "email":"\<email\>"} |
+| 127.0.0.1 | 9090 | /newservice | HTTP | PUT | | {"id":"\<id\>", "endpoint":["\<endpoint\>", ..], "resurce":"\<resurce\>"} |
 |  |  |  | MQTT | | /tiot/16/GET/messagebroker | |
 |  |  |  | MQTT | | /tiot/16/GET/devices | |
-|  |  |  | MQTT | | /tiot/16/GET/devices/<id> | |
+|  |  |  | MQTT | | /tiot/16/GET/devices/\<id\> | |
 |  |  |  | MQTT | | /tiot/16/GET/users | |
-|  |  |  | MQTT | | /tiot/16/GET/users/<id> | |
+|  |  |  | MQTT | | /tiot/16/GET/users/\<id\> | |
 |  |  |  | MQTT | | /tiot/16/GET/services | |
-|  |  |  | MQTT | | /tiot/16/GET/services/<id> | |
-|  |  |  | MQTT | | /tiot/16/PUT/newdevice | {"id":"<id>", "endpoint":["<endpoint>", ..], "resurce":"<resurce>"} |
-|  |  |  | MQTT | | /tiot/16/PUT/newuser | {"id":"<id>", "name":"<name>", "surname":"<surname>", "email":"<email>"} |
-|  |  |  | MQTT | | /tiot/16/PUT/newservice | {"id":"<id>", "endpoint":["<endpoint>", ..], "resurce":"<resurce>"} |
+|  |  |  | MQTT | | /tiot/16/GET/services/\<id\> | |
+|  |  |  | MQTT | | /tiot/16/PUT/newdevice | {"id":"\<id\>", "endpoint":["\<endpoint\>", ..], "resurce":"\<resurce\>"} |
+|  |  |  | MQTT | | /tiot/16/PUT/newuser | {"id":"\<id\>", "name":"\<name\>", "surname":"\<surname\>", "email":"\<email\>"} |
+|  |  |  | MQTT | | /tiot/16/PUT/newservice | {"id":"\<id\>", "endpoint":["\<endpoint\>", ..], "resurce":"\<resurce\>"} |

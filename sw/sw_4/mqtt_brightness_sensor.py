@@ -27,7 +27,7 @@ class brightness_sensor():
         
     def brightness_read(self):
         '''
-        Read the brightness in lux (randon number), encode in JSON format following the
+        Read the brightness in lux (random number), encode in JSON format following the
         SenML standards and publish it on the topic
         '''
         b = random.randint(20, 800)

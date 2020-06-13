@@ -1,1 +1,1 @@
-{"users": [], "devices": [{"id": "Y\u00f9n - Gruppo 16", "endpoint": ["/tiot/16/led"], "resource": "Led", "timestamp": 1592041989.828048}, {"id": "Yun_16", "descriptio": "Smart home", "endpoint": ["/tiot/16/yun/temp", "/tiot/16/yun/people", "/tiot/16/yun/ventola", "/tiot/16/yun/led", "/tiot/16/yun/disp"], "timestamp": 1592041863.057157}], "services": [{"id": "gp16service", "description": "Service MQTT", "endpoint": ["/tiot/16/service"], "timestamp": 1592041989.695921}]}
+{"users": [],"devices": [],"services": []}

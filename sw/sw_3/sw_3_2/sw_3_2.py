@@ -35,7 +35,6 @@ class Service():
 
         response = requests.get('http://127.0.0.1:9090/messagebroker')
         txt = json.loads(response.text)
-        print(txt)
         self.broker = txt["domain"]
         self.port = txt["port"]
 

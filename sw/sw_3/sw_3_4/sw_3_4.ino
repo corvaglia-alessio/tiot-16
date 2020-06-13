@@ -47,7 +47,9 @@ int last_noise = 0;
 int index_noise = 0;
 
 const int cap = JSON_OBJECT_SIZE(2)+JSON_ARRAY_SIZE(1)+JSON_OBJECT_SIZE(4)+40;
+const int cap2 = JSON_OBJECT_SIZE(3)+JSON_ARRAY_SIZE(1)+JSON_ARRAY_SIZE(1)+JSON_OBJECT_SIZE(5)+40
 DynamicJsonDocument doc_snd(cap);
+DynamicJsonDocument doc_snd2(cap2);
 DynamicJsonDocument doc_rcv(cap);
 
 void setup()
@@ -96,6 +98,7 @@ void setup()
 
 void loop()
 {
+    mqtt.monitor();
     if(digitalRead(NOISE_PIN)==LOW)
     {
         people_in_room_noise();
@@ -128,20 +131,16 @@ void people()
 
 void registra_catalog()
 {
-  doc_snd.clear();
-  doc_snd["id"]="Yun_16";
-  doc_snd["endpoint"][0]="/tiot/16/yun/temp";
-  doc_snd["endpoint"][1]="/tiot/16/yun/people";
-  doc_snd["endpoint"][2]="/tiot/16/yun/ventola";
-  doc_snd["endpoint"][3]="/tiot/16/yun/led";
-  doc_snd["endpoint"][4]="/tiot/16/yun/disp";
-  doc_snd["resource"][0]="temperature";
-  doc_snd["resource"][1]="people";
-  doc_snd["resource"][2]="ventola";
-  doc_snd["resource"][3]="led";
-  doc_snd["resource"][4]="disp";
+  doc_snd2.clear();
+  doc_snd2["id"]="Yun_16";
+  doc_snd2["endpoint"][0]="/tiot/16/yun/temp";
+  doc_snd2["endpoint"][1]="/tiot/16/yun/people";
+  doc_snd2["endpoint"][2]="/tiot/16/yun/ventola";
+  doc_snd2["endpoint"][3]="/tiot/16/yun/led";
+  doc_snd2["endpoint"][4]="/tiot/16/yun/disp";
+  doc_snd2["resource"]="temperature, people, ventola, led, display";
   String out;
-  serializeJson(doc_snd, out);
+  serializeJson(doc_snd2, out);
   mqtt.publish("/tiot/16/PUT/newdevice", out);
 }
 

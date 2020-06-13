@@ -79,6 +79,8 @@ class Service():
             type_ = topic.split("/")[4]
             json_msg = json.loads(msg)
 
+        print(type_, json_msg)
+
         if type_ == "devices":
             self.endpoint_yun = json_msg["endpoint"]
         
@@ -86,12 +88,15 @@ class Service():
                 self.myMqttClient.mySubscribe(e)
         
         if type_ == "temp":
-            temperatura(self, json_msg)
+            print("entro in temp type")
+            self.temperatura(json_msg)
         
         if type_ == "people":
-            people(self, json_msg)
+            self.people(json_msg)
 
     def temperatura(self, json_temp):
+        
+        print("entro gestisci temp")
         try:
             self.temp = float(json_temp["e"][0]["v"])
         except:
@@ -99,8 +104,10 @@ class Service():
             return
         self.cont_t -= -1
         self.regola_valori()
+        print("temp", self.temp)
         self.regola_ventola(self.temp)
         self.regola_led(self.temp)
+        print("fine t")
 
         if self.cont_t == 1:
             f_s = f"T:{self.temp} Pres:{self.people}"
@@ -139,9 +146,12 @@ class Service():
         if temp < self.temp_ventola_min:
             temp = self.temp_ventola_min;
 
+        print("Entro in vent")
+
         self.ventola_state = map(temp, self.temp_ventola_max, self.temp_ventola_min)
         json_state = {"bn":f"{self.id_}", "e":[{"n":"ventola", "t":time.time(), "v":self.ventola_state, "u":"%"}]}
         self.myMqttClient.myPublish("/tiot/16/yun/ventola", json.dumps(json_state))
+        print("Inviato vent")
 
     def regola_led(self, temp):
         if temp > self.temp_led_max:

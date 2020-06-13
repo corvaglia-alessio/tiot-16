@@ -69,7 +69,7 @@
     0 a 255
 */
 #define STEP(min, max)  (max-min)/10
-#define MAP(val, start_range, step)   step*(val-start_range) // da testare con valori double
+#define MAP(val, start_range, step)   step*(val-start_range)
 
 // Sensore di temperatura
 #define R(vsig) ((VCC/vsig) - 1)*R0

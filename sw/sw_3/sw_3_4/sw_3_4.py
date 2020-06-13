@@ -176,7 +176,7 @@ if __name__ == "__main__":
     broker = service.broker
     port = service.port
     print(broker, port)
-    service.info_device(id_="Yùn - Gruppo 16")
+    service.info_device(id_="Yun_16")
 
     loop_request = Loop(1*60, id_=id_+"service", description=description, endpoint=endpoint, broker=broker, port=port)
     loop_request.start()

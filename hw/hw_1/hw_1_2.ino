@@ -9,8 +9,8 @@
 #define RED_PERIOD 3
 #define GREEN_PERIOD 7
 
-int redState = LOW;
-int greenState = LOW;
+volatile int redState = LOW;
+volatile int greenState = LOW;
 
 void func_green()
 {

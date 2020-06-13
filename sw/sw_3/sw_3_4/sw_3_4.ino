@@ -47,7 +47,7 @@ int last_noise = 0;
 int index_noise = 0;
 
 const int cap = JSON_OBJECT_SIZE(2)+JSON_ARRAY_SIZE(1)+JSON_OBJECT_SIZE(4)+40;
-const int cap2 = JSON_OBJECT_SIZE(3)+JSON_ARRAY_SIZE(1)+JSON_ARRAY_SIZE(1)+JSON_OBJECT_SIZE(5)+40
+const int cap2 = JSON_OBJECT_SIZE(3)+JSON_ARRAY_SIZE(1)+JSON_ARRAY_SIZE(1)+JSON_OBJECT_SIZE(5)+40;
 DynamicJsonDocument doc_snd(cap);
 DynamicJsonDocument doc_snd2(cap2);
 DynamicJsonDocument doc_rcv(cap);

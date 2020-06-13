@@ -5,7 +5,7 @@ import random
 
 class brightness_sensor():
     
-    def __init__(self, clientID, endpoints, broker, port, pub_topic, catalog_topic_reg_device):
+    def __init__(self, clientID, broker, port, pub_topic):
         '''
         Create an MQTT client that connects to a broker and register 
         its self as a device and as a service to a catalog via given topics.
@@ -19,10 +19,7 @@ class brightness_sensor():
         self._paho_mqtt.connect(self.broker, self.port)
         self._paho_mqtt.loop_start()
         print("Successfully connected to the broker")
-        diz={"id":clientID, "endpoint":endpoints, "resource": "brightness"}
-        msg=json.dumps(diz)
-        self._paho_mqtt.publish(catalog_topic_reg_device, msg, 2)
-        print("Successfully registered on the catalog")
+        
         
     def brightness_read(self):
         '''
@@ -36,7 +33,11 @@ class brightness_sensor():
         print("Brightness sent")
         
 if __name__ == "__main__":
-    b = brightness_sensor("bright_01", ["/tiot/16/GET/brightness"], "mqtt.eclipse.org", 1883, "/tiot/16/GET/brightness", "/tiot/16/PUT/newdevice")
+    b = brightness_sensor("bright_01", "mqtt.eclipse.org", 1883, "/tiot/16/GET/brightness")
     while True:
+        diz={"id":clientID, "endpoint":["/tiot/16/GET/brightness"], "resource": "brightness"}
+        msg=json.dumps(diz)
+        self._paho_mqtt.publish("/tiot/16/PUT/newdevice", msg, 2)
+        print("Successfully registered on the catalog")
         b.brightness_read()
         time.sleep(60)

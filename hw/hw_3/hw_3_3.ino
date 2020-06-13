@@ -29,7 +29,7 @@ void setup() {
   pinMode(TEMP_PIN, INPUT);
   pinMode(LED_INT_PIN, OUTPUT);
 
-  digitalWrite(LED_PIN, LOW);
+  digitalWrite(LED_INT_PIN, LOW);
   Bridge.begin();
   digitalWrite(LED_INT_PIN, HIGH);
 

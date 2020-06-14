@@ -46,6 +46,9 @@ class Service():
         self.TEMP_LED_MIN_A = 17.0
         self.TEMP_LED_MAX_A = 22.0
 
+        self.modificati_led = False
+        self.modificati_ventola = False
+
         self.temp_ventola_min = self.TEMP_VENTOLA_MIN_A; 
         self.temp_ventola_max = self.TEMP_VENTOLA_MAX_A; 
 
@@ -66,18 +69,23 @@ class Service():
         self.myMqttClient = MyMQTT(id_, self.broker, self.port, self)
         self.myMqttClient.start()
         self.myMqttClient.mySubscribe("/tiot/16/GET/devices/+/response")
+        self.myMqttClient.mySubscribe("/tiot/16/service/range/led/#")
+        self.myMqttClient.mySubscribe("/tiot/16/service/range/ventola/#")
 
     
     def info_device(self, id_):
         self.myMqttClient.myPublish(f"/tiot/16/GET/devices/{id_}")
 
-    def notify(self, topic, msg): ## Gestire piu' topic dello YUN
-        len_ = len(topic.split("/"))
+    def notify(self, topic, msg):
+
+        topic_list = topic.split("/")
+        len_ = len(topic_list)
         type_ = ""
 
         if len_ > 4:
-            type_ = topic.split("/")[4]
-            json_msg = json.loads(msg)
+            type_ = topic_list[4]
+            if type_ != "range":
+                json_msg = json.loads(msg)
 
         if type_ == "devices":
             self.endpoint_yun = json_msg["endpoint"]
@@ -90,6 +98,27 @@ class Service():
         
         if type_ == "people":
             self.people(json_msg)
+
+        if type_ == "range":
+            elemento = topic_list[5]
+            estremo = topic_list[6]
+            valore = topic_list[7]
+
+            if elemento == "led":
+                self.modificati_led = True
+
+                if estremo == "min":
+                    self.temp_led_min = float(valore)
+                else:
+                    self.temp_led_max = float(valore)
+            
+            else:
+                self.modificati_ventola = True
+
+                if estremo == "min":
+                    self.temp_ventola_min = float(valore)
+                else:
+                    self.temp_ventola_max = float(valore)
 
     def temperatura(self, json_temp):
 
@@ -119,17 +148,21 @@ class Service():
     def regola_valori(self):
 
         if self.people_val == 1:
-            self.temp_ventola_min = self.TEMP_VENTOLA_MIN_P
-            self.temp_ventola_max = self.TEMP_VENTOLA_MAX_P
+            if self.modificati_ventola == False:
+                self.temp_ventola_min = self.TEMP_VENTOLA_MIN_P
+                self.temp_ventola_max = self.TEMP_VENTOLA_MAX_P
 
-            self.temp_led_min = self.TEMP_LED_MIN_P
-            self.temp_led_max = self.TEMP_LED_MAX_P
+            if self.modificati_led == False:
+                self.temp_led_min = self.TEMP_LED_MIN_P
+                self.temp_led_max = self.TEMP_LED_MAX_P
         else:
-            self.temp_ventola_min = self.TEMP_VENTOLA_MIN_A
-            self.temp_ventola_max = self.TEMP_VENTOLA_MAX_A
+            if self.modificati_ventola == False:
+                self.temp_ventola_min = self.TEMP_VENTOLA_MIN_A
+                self.temp_ventola_max = self.TEMP_VENTOLA_MAX_A
 
-            self.temp_led_min = self.TEMP_LED_MIN_A
-            self.temp_led_max = self.TEMP_LED_MAX_A
+            if self.modificati_led == False:
+                self.temp_led_min = self.TEMP_LED_MIN_A
+                self.temp_led_max = self.TEMP_LED_MAX_A
 
 
     def regola_ventola(self, temp):
@@ -170,7 +203,7 @@ class Service():
 if __name__ == "__main__":
     id_ = "gp16"
     description = "Service MQTT"
-    endpoint = ["/tiot/16/service"]
+    endpoint = ["/tiot/16/service/range/led/#", "/tiot/16/service/range/ventola/#"]
 
 
     service = Service(id_=id_)

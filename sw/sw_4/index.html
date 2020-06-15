@@ -17,8 +17,9 @@
         <div>
             <img src="img/ventola.png" width="100px" height="100px">
             <form action="/ventola" method="get">
-                <label for="vol">Intensità (between 0 and 100):</label><br>
-                <input type="range" id="vol" name="vol" min="0" max="100" value="0"><br>
+                <label for="vol1">Intensità (between 0 and 100):</label><br>
+                <input type="range" id="vol1" name="vol" min="0" max="100" value="0" onchange="getvalor(this.value);" oninput="vol1O.value = vol1.value"><br>
+                <input type="text" name="vol1O" id="vol1O" ></input>
                 <input type="submit"><br>
             </form>
         </div>
@@ -26,10 +27,12 @@
             <img src="img/stufa.png" width="100px" height="100px">
             <form action="/stufa" method="get">
                 <label for="vol">Intensità (between 0 and 100):</label><br>
-                <input type="range" id="vol" name="vol" min="0" max="100" value="0"><br>
+                <input type="range" id="vol2" name="vol" min="0" max="100" value="0" onchange="getvalor(this.value);" oninput="vol2O.value = vol2.value"><br>
+                <input type="text" name="vol2O" id="vol2O" ></input>
                 <input type="submit">
             </form>
         </div>
     </div>
+    
 </body>
 </html>

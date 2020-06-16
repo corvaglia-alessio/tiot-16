@@ -68,6 +68,7 @@ class Service():
 
         self.people_val = 0
         self.temp = None
+        self.tr = False
 
         self.myMqttClient = MyMQTT(id_, self.broker, self.port, self)
         self.myMqttClient.start()
@@ -82,6 +83,7 @@ class Service():
     def info_device(self, id_):
         while not(self.ardu):
             self.myMqttClient.myPublish(f"/tiot/16/GET/devices/{id_}")
+            time.sleep(2)
 
     def notify(self, topic, msg):
 
@@ -94,9 +96,9 @@ class Service():
             if type_ != "range":
                 json_msg = json.loads(msg)
 
-        if type_ == "devices":
+        if type_ == "devices" and not(self.tr):
             self.endpoint_yun = json_msg["endpoint"]
-        
+            self.tr = True
             for e in self.endpoint_yun:
                 self.myMqttClient.mySubscribe(e)
 
@@ -230,7 +232,7 @@ class Service():
 
 
 if __name__ == "__main__":
-    id_ = "Service temperature"
+    id_ = "Service_temperature"
     description = "Service MQTT"
     endpoint = ["/tiot/16/service/range/led/#", "/tiot/16/service/range/ventola/#", "/tiot/16/service/val/ventola/+", "/tiot/16/service/val/led/+"]
 
@@ -240,5 +242,5 @@ if __name__ == "__main__":
     port = service.port
     #service.info_device(id_="Yun_16")
 
-    loop_request = Loop(1*60, id_=id_+" loop", description=description, endpoint=endpoint, broker=broker, port=port)
+    loop_request = Loop(1*60, id_=id_+"_loop", description=description, endpoint=endpoint, broker=broker, port=port)
     loop_request.start()

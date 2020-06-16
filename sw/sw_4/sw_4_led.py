@@ -40,16 +40,18 @@ class Service():
         self.port = txt["port"]
 
         self.ardu = False
+        self.tr = False
 
         self.myMqttClient = MyMQTT(id_, self.broker, self.port, self)
         self.myMqttClient.start()
         self.myMqttClient.mySubscribe("/tiot/16/GET/devices/+/response")
-        self.info_device("Yùn - Gruppo 16")
+        self.info_device("Yun_16")
 
     
     def info_device(self, id_):
         while not(self.ardu):
             self.myMqttClient.myPublish(f"/tiot/16/GET/devices/{id_}")
+            time.sleep(2)
 
     def notify(self, topic, msg):
 
@@ -60,7 +62,8 @@ class Service():
         if len_ > 4:
             type_ = topic_list[4]
 
-        if type_ == "devices":
+        if type_ == "devices" and not(self.tr):
+            self.tr = True
             self.ardu = True
             self.topic_luce = json.loads(msg)["endpoint"][0]
 
@@ -69,7 +72,7 @@ class Service():
             self.myMqttClient.myPublish(self.topic_luce,json.dumps(dati))
 
 if __name__ == "__main__":
-    id_ = "Service led"
+    id_ = "Service_led"
     description = "Service MQTT"
     endpoint = ["/tiot/16/service", "/tiot/16/service/val/luce/+"]
 
@@ -79,5 +82,5 @@ if __name__ == "__main__":
     port = service.port
     print(broker, port)
 
-    loop_request = Loop(1*60, id_=id_+" loop", description=description, endpoint=endpoint, broker=broker, port=port)
+    loop_request = Loop(1*60, id_=id_+"_loop", description=description, endpoint=endpoint, broker=broker, port=port)
     loop_request.start()

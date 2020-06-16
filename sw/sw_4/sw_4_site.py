@@ -54,10 +54,10 @@ class Site():
 
         self.myMqttClient = MyMQTT(id_, self.broker, self.port, self)
         self.myMqttClient.start()
-        self.myMqttClient.mySubscribe("/tiot/16/GET/devices/+/response")
-        self.info_device(id_="Service temperature loop")
+        self.myMqttClient.mySubscribe("/tiot/16/GET/services/+/response")
+        self.info_service(id_="Service_temperature_loop")
         self.serv = False
-        self.info_device(id_="Service led loop")
+        self.info_service(id_="Service_led_loop")
 
     def notify(self, topic, msg):
 
@@ -70,23 +70,25 @@ class Site():
             if type_ != "range":
                 json_msg = json.loads(msg)
 
-        if type_ == "devices":
+        if type_ == "services":
             self.endpoint = json_msg["endpoint"]
         
             for e in self.endpoint:
                 type_e = e.split("/")
+                e = e[0:len(e)-2]
                 if type_e[5] == "led":
                     self.topic_led = e
                 if type_e[5] == "ventola":
                     self.topic_ventola = e
                 if type_e[5] == "luce":
                     self.topic_luce = e
-
+            print(self.topic_led, self.topic_luce, self.topic_ventola)
             self.serv = True
 
-    def info_device(self, id_):
-        while not(self.serv):
-            self.myMqttClient.myPublish(f"/tiot/16/GET/devices/{id_}")
+    def info_service(self, id_):
+        #while not(self.serv):
+        self.myMqttClient.myPublish(f"/tiot/16/GET/services/{id_}")
+        time.sleep(4)
 
     def GET(self, *uri, **param):
 
@@ -100,14 +102,18 @@ class Site():
                 self.myMqttClient.myPublish(f"{self.topic_luce}/1")
             else: # off
                 self.myMqttClient.myPublish(f"{self.topic_luce}/0")
+            
+            return self.index_html
 
         if uri[0] == "ventola":
             self.ventola = param.get("vol")
             self.myMqttClient.myPublish(f"{self.topic_ventola}/{self.ventola}")
+            return self.index_html
 
         if uri[0] == "led":
             self.led = param.get("vol")
             self.myMqttClient.myPublish(f"{self.topic_led}/{self.led}")
+            return self.index_html
 
         cp.HTTPError(404, "Page not found")
 
@@ -127,18 +133,18 @@ if __name__ == "__main__":
                             "tools.staticdir.dir": "./css"
                         }
             }
-    id_ = "Service site"
+    id_ = "Service_site"
     description = "Service site"
     endpoint = ["GET /"]
 
-    site = Site()
+    site = Site(id_)
     broker = site.broker
     port = site.port
     cp.tree.mount(site, "/", conf)
 
-    cp.config.update({'server.socket_port': 9090})
+    cp.config.update({'server.socket_port': 9070})
 
-    loop_request = Loop(1*60, id_=id_+" loop", description=description, endpoint=endpoint, broker=broker, port=port)
+    loop_request = Loop(1*60, id_=id_+"_loop", description=description, endpoint=endpoint, broker=broker, port=port)
     loop_request.start()
 
     cp.engine.start()

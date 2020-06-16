@@ -9,7 +9,7 @@
     <div class="three_banner">
         <div>
             <img src="img/led.png" width="100px" height="100px"><br><br>
-            <form action="/led" method="get">
+            <form action="/luce" method="get">
                 <button name="subject" type="submit" value="on">ON</button>
                 <button name="subject" type="submit" value="off">OFF</button><br>
             </form>
@@ -25,7 +25,7 @@
         </div>
         <div>
             <img src="img/stufa.png" width="100px" height="100px">
-            <form action="/stufa" method="get">
+            <form action="/led" method="get">
                 <label for="vol2">Intensità (between 0 and 100):</label><br>
                 <input type="range" id="vol2" name="vol" min="0" max="100" value="0" onchange="getvalor(this.value);" oninput="vol2O.value = vol2.value"><br>
                 <input type="text" name="vol2O" id="vol2O" ></input>

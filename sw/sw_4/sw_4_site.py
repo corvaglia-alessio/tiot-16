@@ -72,7 +72,7 @@ class Site():
 
         if type_ == "services":
             self.endpoint = json_msg["endpoint"]
-        
+            print(self.endpoint)
             for e in self.endpoint:
                 type_e = e.split("/")
                 e = e[0:len(e)-2]

@@ -45,6 +45,7 @@ class Service():
         self.myMqttClient = MyMQTT(id_, self.broker, self.port, self)
         self.myMqttClient.start()
         self.myMqttClient.mySubscribe("/tiot/16/GET/devices/+/response")
+        self.myMqttClient.mySubscribe("/tiot/16/service/val/luce/+")
         self.info_device("Yun_16")
 
     
@@ -74,7 +75,7 @@ class Service():
 if __name__ == "__main__":
     id_ = "Service_led"
     description = "Service MQTT"
-    endpoint = ["/tiot/16/service", "/tiot/16/service/val/luce/+"]
+    endpoint = ["/tiot/16/service/val/luce/+"]
 
 
     service = Service(id_=id_)

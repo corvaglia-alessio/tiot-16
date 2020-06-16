@@ -112,7 +112,7 @@ class Service():
 
         if type_ == "val":
             elemento = topic_list[5]
-
+            print("VALLLLLLL")
             if elemento == "led":
                 self.modificati_led_val = True
                 self.led_state = float(topic_list[6])

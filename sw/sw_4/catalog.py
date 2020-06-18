@@ -46,7 +46,7 @@ newsuser:	{"id":"<id>",
 							 "email":"<email>"
 							}
 Le response per richieste MQTT sono pubblicate sui topic:
-/tiot/16/GET/+/response
+/tiot/16/GET/+/response 
 /tiot/16/GET/+/+/response"
 }
 """

@@ -1,3 +1,3 @@
 mosquitto_pub -h mqtt.eclipse.org -t "/tiot/#" -m "{"bn": "Yun", "e": [{  "n" : "led","t": null, "v" : 1, "u":null}]}"
 
-mosquitto_sub -h mqtt.eclipse.org -t "/tiot/+/temperature"
+mosquitto_sub -h mqtt.eclipse.org -t  "/tiot/+/temperature"

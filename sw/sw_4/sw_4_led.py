@@ -39,20 +39,20 @@ class Service():
         self.broker = txt["domain"]
         self.port = txt["port"]
 
-        self.ardu = False
-        self.tr = False
+        
 
         self.myMqttClient = MyMQTT(id_, self.broker, self.port, self)
         self.myMqttClient.start()
         self.myMqttClient.mySubscribe("/tiot/16/GET/devices/+/response")
         self.myMqttClient.mySubscribe("/tiot/16/service/val/luce/+")
         self.info_device("Yun_16")
+        self.info_device("bright_01")
 
     
     def info_device(self, id_):
-        while not(self.ardu):
-            self.myMqttClient.myPublish(f"/tiot/16/GET/devices/{id_}")
-            time.sleep(2)
+        
+        self.myMqttClient.myPublish(f"/tiot/16/GET/devices/{id_}")
+            
 
     def notify(self, topic, msg):
 
@@ -63,14 +63,30 @@ class Service():
         if len_ > 4:
             type_ = topic_list[4]
 
-        if type_ == "devices" and not(self.tr):
-            self.tr = True
-            self.ardu = True
-            self.topic_luce = json.loads(msg)["endpoint"][0]
+
+        if type_ == "devices":
+            jsonb=json.loads(msg)
+            if jsonb["id"] == "bright_01":
+                self.myMqttClient.mySubscribe(jsonb["endpoint"][0])
+            else:
+                self.topic_luce = json.loads(msg)["endpoint"][0]
 
         if type_ == "luce":
             dati = { 'bn': 'Yun', 'e': [ { 'n' : 'led','t': None, 'v' : int(topic_list[5]), 'u':None} ] }         
             self.myMqttClient.myPublish(self.topic_luce,json.dumps(dati))
+        if topic_list[4] == "brightness":
+            valLuce=json.loads(msg)["e"][0]["v"];
+            if valLuce<200:
+                dati = { 'bn': 'Yun', 'e': [ { 'n' : 'led','t': None, 'v' : 1, 'u':None} ] }
+                print("BBB")
+                self.myMqttClient.myPublish("/tiot/16/yun/lampadina",json.dumps(dati))
+            else:
+                dati = { 'bn': 'Yun', 'e': [ { 'n' : 'led','t': None, 'v' : 0, 'u':None} ] }
+                print("AAAAA")
+                self.myMqttClient.myPublish("/tiot/16/yun/lampadina",json.dumps(dati))
+
+
+
 
 if __name__ == "__main__":
     id_ = "Service_led"

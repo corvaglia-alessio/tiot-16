@@ -35,9 +35,9 @@ class brightness_sensor():
 if __name__ == "__main__":
     b = brightness_sensor("bright_01", "mqtt.eclipse.org", 1883, "/tiot/16/GET/brightness")
     while True:
-        diz={"id":clientID, "endpoint":["/tiot/16/GET/brightness"], "resource": "brightness"}
+        diz={"id":"bright_01", "endpoint":["/tiot/16/GET/brightness"], "resource": "brightness"}
         msg=json.dumps(diz)
-        self._paho_mqtt.publish("/tiot/16/PUT/newdevice", msg, 2)
+        b._paho_mqtt.publish("/tiot/16/PUT/newdevice", msg, 2)
         print("Successfully registered on the catalog")
         b.brightness_read()
         time.sleep(60)

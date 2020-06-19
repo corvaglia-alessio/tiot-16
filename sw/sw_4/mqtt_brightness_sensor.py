@@ -33,7 +33,7 @@ class brightness_sensor():
         print("Brightness sent")
         
 if __name__ == "__main__":
-    b = brightness_sensor("bright_01", "mqtt.eclipse.org", 1883, "/tiot/16/GET/brightness")
+    b = brightness_sensor("bright_01", "test.mosquitto.org", 1883, "/tiot/16/GET/brightness")
     while True:
         diz={"id":"bright_01", "endpoint":["/tiot/16/GET/brightness"], "resource": "brightness"}
         msg=json.dumps(diz)

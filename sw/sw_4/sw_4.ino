@@ -47,10 +47,8 @@ unsigned long time_cont_people_noise[N_NOISE] = {0};
 int last_noise = 0;
 int index_noise = 0;
 
-const int cap = JSON_OBJECT_SIZE(2)+JSON_ARRAY_SIZE(1)+JSON_OBJECT_SIZE(4)+40;
-const int cap2 = JSON_OBJECT_SIZE(3)+JSON_ARRAY_SIZE(1)+JSON_ARRAY_SIZE(1)+JSON_OBJECT_SIZE(5)+40;
+const int cap = JSON_OBJECT_SIZE(3)+JSON_ARRAY_SIZE(1)+JSON_ARRAY_SIZE(1)+JSON_OBJECT_SIZE(5)+40;
 DynamicJsonDocument doc_snd(cap);
-DynamicJsonDocument doc_snd2(cap2);
 DynamicJsonDocument doc_rcv(cap);
 
 void setup()
@@ -58,7 +56,7 @@ void setup()
     // Set serial
     Serial.begin(9600);
     while(!Serial);
-    Serial.println("LAB SW 3_4\nSmart home controller online\nManco Davide\nCorvaglia Alessio\nManco Marco");
+    Serial.println("LAB SW 4\nSmart home controller online\nManco Davide\nCorvaglia Alessio\nManco Marco");
 
      // Set dei pin
     pinMode(TEMP_PIN, INPUT);
@@ -156,16 +154,17 @@ void people()
 
 void registra_catalog()
 {
-  doc_snd2.clear();
-  doc_snd2["id"]="Yun_16";
-  doc_snd2["endpoint"][0]="/tiot/16/yun/temp";
-  doc_snd2["endpoint"][1]="/tiot/16/yun/people";
-  doc_snd2["endpoint"][2]="/tiot/16/yun/ventola";
-  doc_snd2["endpoint"][3]="/tiot/16/yun/led";
-  doc_snd2["endpoint"][4]="/tiot/16/yun/disp";
-  doc_snd2["resource"]="temperature, people, ventola, led, display";
+  doc_snd.clear();
+  doc_snd["id"]="Yun_16";
+  doc_snd["endpoint"][0]="/tiot/16/yun/temp";
+  doc_snd["endpoint"][1]="/tiot/16/yun/people";
+  doc_snd["endpoint"][2]="/tiot/16/yun/ventola";
+  doc_snd["endpoint"][3]="/tiot/16/yun/led";
+  doc_snd["endpoint"][4]="/tiot/16/yun/disp";
+  doc_snd["endpoint"][5]="/tiot/16/yun/lampadina";
+  doc_snd["resource"]="temperature, people, ventola, led, display, lampadina";
   String out;
-  serializeJson(doc_snd2, out);
+  serializeJson(doc_snd, out);
   mqtt.publish("/tiot/16/PUT/newdevice", out);
 }
 

@@ -47,7 +47,7 @@ unsigned long time_cont_people_noise[N_NOISE] = {0};
 int last_noise = 0;
 int index_noise = 0;
 
-const int cap = JSON_OBJECT_SIZE(3)+JSON_ARRAY_SIZE(1)+JSON_ARRAY_SIZE(1)+JSON_OBJECT_SIZE(5)+40;
+const int cap = JSON_OBJECT_SIZE(3)+JSON_ARRAY_SIZE(6)+200;
 DynamicJsonDocument doc_snd(cap);
 DynamicJsonDocument doc_rcv(cap);
 
@@ -90,7 +90,7 @@ void setup()
     attachInterrupt(digitalPinToInterrupt(PIR_PIN), people_in_room_pir, CHANGE);
 
     //sottoscrizione ai topic attuazione
-    mqtt.begin("mqtt.eclipse.org", 1883);
+    mqtt.begin("test.mosquitto.org", 1883);
     mqtt.subscribe("/tiot/16/yun/led", regola_led);
     mqtt.subscribe("/tiot/16/yun/disp", stampa_on_lcd);
     mqtt.subscribe("/tiot/16/yun/ventola", regola_ventola);

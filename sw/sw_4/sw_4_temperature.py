@@ -93,7 +93,7 @@ class Service():
 
         if len_ > 4:
             type_ = topic_list[4]
-            if type_ != "range":
+            if type_ != "range" and type_ != "val":
                 json_msg = json.loads(msg)
 
         if type_ == "devices" and not(self.tr):
@@ -112,7 +112,6 @@ class Service():
 
         if type_ == "val":
             elemento = topic_list[5]
-            print("VALLLLLLL")
             if elemento == "led":
                 self.modificati_led_val = True
                 self.led_state = float(topic_list[6])

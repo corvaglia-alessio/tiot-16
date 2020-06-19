@@ -35,7 +35,6 @@ class Service():
 
         response = requests.get('http://127.0.0.1:9090/messagebroker')
         txt = json.loads(response.text)
-        print(txt)
         self.broker = txt["domain"]
         self.port = txt["port"]
 
@@ -71,18 +70,17 @@ class Service():
             else:
                 self.topic_luce = json.loads(msg)["endpoint"][0]
 
-        if type_ == "luce":
-            dati = { 'bn': 'Yun', 'e': [ { 'n' : 'led','t': None, 'v' : int(topic_list[5]), 'u':None} ] }         
+        if type_ == "val":
+            dati = { 'bn': 'Yun', 'e': [ { 'n' : 'led','t': None, 'v' : int(topic_list[6]), 'u':None} ] }         
             self.myMqttClient.myPublish(self.topic_luce,json.dumps(dati))
+            
         if topic_list[4] == "brightness":
             valLuce=json.loads(msg)["e"][0]["v"];
             if valLuce<200:
                 dati = { 'bn': 'Yun', 'e': [ { 'n' : 'led','t': None, 'v' : 1, 'u':None} ] }
-                print("BBB")
                 self.myMqttClient.myPublish("/tiot/16/yun/lampadina",json.dumps(dati))
             else:
                 dati = { 'bn': 'Yun', 'e': [ { 'n' : 'led','t': None, 'v' : 0, 'u':None} ] }
-                print("AAAAA")
                 self.myMqttClient.myPublish("/tiot/16/yun/lampadina",json.dumps(dati))
 
 
@@ -97,7 +95,6 @@ if __name__ == "__main__":
     service = Service(id_=id_)
     broker = service.broker
     port = service.port
-    print(broker, port)
 
     loop_request = Loop(1*60, id_=id_+"_loop", description=description, endpoint=endpoint, broker=broker, port=port)
     loop_request.start()

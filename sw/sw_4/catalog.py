@@ -81,7 +81,7 @@ class Catalog():
         self.leggi_values()
 
         self.clientID = "tiot-16"
-        self.myMqttClient = MyMQTT(self.clientID, "mqtt.eclipse.org", 1883, self)
+        self.myMqttClient = MyMQTT(self.clientID, "test.mosquitto.org", 1883, self) #mqtt.eclipse.org
         self.run()
         self.myMqttClient.mySubscribe("/tiot/16/GET")
         self.myMqttClient.mySubscribe("/tiot/16/GET/messagebroker")
@@ -358,7 +358,7 @@ if __name__ == "__main__":
                             'tools.staticdir.root': os.path.abspath(os.getcwd())
                         }
             }
-    catalog = Catalog("mqtt.eclipse.org", port=1883)
+    catalog = Catalog("test.mosquitto.org", port=1883)
     loop = Loop(2*60, catalog)
     loop.start()
     cp.tree.mount(catalog, '/', conf)

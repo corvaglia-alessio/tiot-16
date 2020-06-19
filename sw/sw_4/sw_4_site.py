@@ -47,7 +47,6 @@ class Site():
         self.port = txt["port"]
         self.id_ = ClientID
 
-        self.serv = False
         self.topic_led = None
         self.topic_ventola = None
         self.topic_luce = None
@@ -56,7 +55,6 @@ class Site():
         self.myMqttClient.start()
         self.myMqttClient.mySubscribe("/tiot/16/GET/services/+/response")
         self.info_service(id_="Service_temperature_loop")
-        self.serv = False
         self.info_service(id_="Service_led_loop")
 
     def notify(self, topic, msg):
@@ -67,8 +65,7 @@ class Site():
 
         if len_ > 4:
             type_ = topic_list[4]
-            if type_ != "range":
-                json_msg = json.loads(msg)
+            json_msg = json.loads(msg)
 
         if type_ == "services":
             self.endpoint = json_msg["endpoint"]
@@ -83,10 +80,8 @@ class Site():
                 if type_e[5] == "luce":
                     self.topic_luce = e
             print(self.topic_led, self.topic_luce, self.topic_ventola)
-            self.serv = True
 
     def info_service(self, id_):
-        #while not(self.serv):
         self.myMqttClient.myPublish(f"/tiot/16/GET/services/{id_}")
         time.sleep(4)
 

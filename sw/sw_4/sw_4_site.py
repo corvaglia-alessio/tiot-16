@@ -69,7 +69,6 @@ class Site():
 
         if type_ == "services":
             self.endpoint = json_msg["endpoint"]
-            print(self.endpoint)
             for e in self.endpoint:
                 type_e = e.split("/")
                 e = e[0:len(e)-2]
@@ -79,7 +78,6 @@ class Site():
                     self.topic_ventola = e
                 if type_e[5] == "luce":
                     self.topic_luce = e
-            print(self.topic_led, self.topic_luce, self.topic_ventola)
 
     def info_service(self, id_):
         self.myMqttClient.myPublish(f"/tiot/16/GET/services/{id_}")
